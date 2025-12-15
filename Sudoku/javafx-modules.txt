@@ -1,0 +1,13 @@
+# Список модулей JavaFX для проекта Sudoku
+# Используется для настройки запуска приложения без module-info.java
+
+javafx.controls
+javafx.fxml
+javafx.graphics
+
+# Дополнительные модули (если понадобятся):
+# javafx.base
+# javafx.media
+# javafx.swing
+# javafx.web
+
