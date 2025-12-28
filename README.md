@@ -105,8 +105,6 @@ Additional utility and factory classes support the core logic.
 - Manages the game timer thread
 - Detects level completion and unlocks the next level
 
----
-
 ### `cz.cvut.fit.sudk.mvc.models`
 
 #### `Constants`
@@ -134,8 +132,6 @@ Additional utility and factory classes support the core logic.
 - Holds the currently active `GameLevel`
 - Acts as the model for the Sudoku game screen
 
----
-
 ### `cz.cvut.fit.sudk.mvc.views`
 
 #### `GameTools`
@@ -152,15 +148,11 @@ Additional utility and factory classes support the core logic.
 - Displays the Sudoku grid, timer, and game status
 - Updates UI elements based on game state
 
----
-
 ## Resources
 
 ### `styles.css`
 - JavaFX CSS stylesheet
 - Defines the visual appearance of UI components
-
----
 
 ## Semester Requirements Fulfillment
 
@@ -182,3 +174,55 @@ Additional utility and factory classes support the core logic.
 #### Game timer
 - Implemented using a dedicated background thread
 - UI updates executed safely using `Platform.runLater`
+
+## Application Screens Overview
+
+This section provides an overview of the main application screens and explains what is displayed on each of them.
+All screenshots are stored in the `pictures/` directory and referenced directly from this README file.
+
+### Main Menu Screen
+
+![Main Menu Screen](pictures/main-menu.png)
+
+The **Main Menu screen** is the first screen displayed after launching the application.
+
+**Displayed elements:**
+- list of available Sudoku levels
+- navigation buttons for switching between pages of levels
+- visual indication of locked and unlocked levels
+- *Play* button to start the selected level
+
+**Purpose:**
+- allows the user to select a Sudoku level
+- reflects the current player progress
+- serves as the entry point to the game
+
+### Sudoku Game Screen
+
+![Sudoku Game Screen](pictures/sudoku-game.png)
+
+The **Sudoku Game screen** represents the main gameplay interface.
+
+**Displayed elements:**
+- Sudoku grid implemented using editable text fields
+- timer displaying elapsed game time
+- game information and hints
+- control buttons for navigation and settings
+
+**Purpose:**
+- allows the user to play the Sudoku game
+- validates user input according to Sudoku rules
+- updates the game state and detects level completion
+
+### Level Loading Screen
+
+![Loading Screen](pictures/loading.png)
+
+The **Loading screen** is displayed while a Sudoku level is being loaded in the background.
+
+**Purpose:**
+- prevents UI freezing during level initialization
+- demonstrates the use of `javafx.concurrent.Task`
+- improves user experience by providing visual feedback
+
+
