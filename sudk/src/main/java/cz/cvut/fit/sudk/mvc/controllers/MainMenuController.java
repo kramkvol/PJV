@@ -8,10 +8,11 @@ import cz.cvut.fit.sudk.mvc.views.MainMenuView;
 import javafx.concurrent.Task;
 import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
+import lombok.Getter;
 
 public final class MainMenuController {
     private final AppContext ctx;
-    private final MainMenuModel model;
+    @Getter protected final MainMenuModel model;
     private final MainMenuView view;
 
     public MainMenuController(AppContext ctx) {
@@ -26,10 +27,6 @@ public final class MainMenuController {
         view.render(model);
     }
 
-    public void onLevelCompleted(int completedLevel) {
-        model.getPlayerProgress().unlockNextLevel(completedLevel);
-        view.render(model);
-    }
     private void wire() {
         view.getBackBtn().setOnAction(e -> {
             model.prevPage();

@@ -2,7 +2,6 @@ package cz.cvut.fit.sudk;
 
 import cz.cvut.fit.sudk.mvc.controllers.AppContext;
 import cz.cvut.fit.sudk.mvc.controllers.MainMenuController;
-import cz.cvut.fit.sudk.mvc.controllers.SudokuFieldController;
 import cz.cvut.fit.sudk.mvc.models.Constants;
 import javafx.application.Application;
 import javafx.geometry.Insets;

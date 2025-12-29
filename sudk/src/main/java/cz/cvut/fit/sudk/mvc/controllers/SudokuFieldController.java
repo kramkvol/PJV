@@ -1,9 +1,9 @@
 package cz.cvut.fit.sudk.mvc.controllers;
 
-import cz.cvut.fit.sudk.mvc.views.GameTools;
-import cz.cvut.fit.sudk.mvc.models.LevelModelUtils;
 import cz.cvut.fit.sudk.mvc.models.Constants;
+import cz.cvut.fit.sudk.mvc.models.LevelModelUtils;
 import cz.cvut.fit.sudk.mvc.models.SudokuFieldModel;
+import cz.cvut.fit.sudk.mvc.views.GameTools;
 import cz.cvut.fit.sudk.mvc.views.SudokuFieldView;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -35,31 +35,32 @@ public final class SudokuFieldController {
         this.view = new SudokuFieldView(ctx);
     }
 
-    // MOUNT
+    // ---------------- MOUNT ----------------
+
     public void mount() {
         view.mount();
         view.render(model);
         attachCells();
-        view.getSettingsBtn().setOnAction(e -> pauseGame());
+        view.getSettingsBtn().setOnAction(e -> clickPause());
         startTimer();
     }
 
-    // SETTINGS / PAUSE MENU
-    private void pauseGame() {
+    // ---------------- GAME FLOW ----------------
+
+    private void clickPause() {
         saveTimerToLevel();
         stopTimer();
         createSettingsDialog();
     }
 
-    private void resumeGame() {
+    private void clickResume() {
         startTimer();
         refreshUI();
         mount();
         view.updateHint("Game continued.");
     }
 
-
-    private void restartGame() {
+    private void clickRestart() {
         model.getLevel().restartLevel();
         refreshUI();
         mount();
@@ -70,20 +71,22 @@ public final class SudokuFieldController {
         mainMenuController.mount();
     }
 
+    // ---------------- UI DIALOGS ----------------
+
     private void createSettingsDialog() {
-        VBox settingsBox = new VBox(Constants.VBOX_SPACING);
-        settingsBox.setAlignment(Pos.CENTER);
+        VBox box = new VBox(Constants.VBOX_SPACING);
+        box.setAlignment(Pos.CENTER);
 
         Button backBtn = GameTools.createDefaultButton("Back to Game");
         Button restartBtn = GameTools.createDefaultButton("Restart Level");
         Button mainMenuBtn = GameTools.createDefaultButton("Main Menu");
 
-        backBtn.setOnAction(e -> resumeGame());
-        restartBtn.setOnAction(e -> restartGame());
+        backBtn.setOnAction(e -> clickResume());
+        restartBtn.setOnAction(e -> clickRestart());
         mainMenuBtn.setOnAction(e -> onMainMenu());
 
-        settingsBox.getChildren().addAll(backBtn, restartBtn, mainMenuBtn);
-        ctx.getRoot().setCenter(settingsBox);
+        box.getChildren().addAll(backBtn, restartBtn, mainMenuBtn);
+        ctx.getRoot().setCenter(box);
     }
 
     private void refreshUI() {
@@ -91,7 +94,7 @@ public final class SudokuFieldController {
         ctx.getRoot().setCenter(view.createCenter());
     }
 
-    // TIMER LOGIC
+    // ---------------- TIMER ----------------
 
     private void startTimer() {
         stopTimer();
@@ -111,36 +114,14 @@ public final class SudokuFieldController {
 
     private void saveTimerToLevel() {
         long now = System.currentTimeMillis();
-        long total = elapsedBefore + (now - startTimestamp);
-        model.getLevel().setElapsedMillis(total);
+        model.getLevel().setElapsedMillis(elapsedBefore + (now - startTimestamp));
     }
 
     private String formatTime(long millis) {
         long sec = millis / 1000;
-        long min = sec / 60;
-        long rem = sec % 60;
-        return String.format("%02d:%02d", min, rem);
+        return String.format("%02d:%02d", sec / 60, sec % 60);
     }
 
-    /*
-     * Background thread that updates the timer on the screen.
-     *
-     * How it works:
-     * - While `running` is true, the thread repeatedly:
-     *      1) Calculates the elapsed time
-     *      2) Uses Platform.runLater() to update the UI safely
-     *      3) Sleeps for a short interval
-     *
-     * Why runLater?
-     * - JavaFX UI can be updated only from the JavaFX Application Thread.
-     *
-     * Stopping:
-     * - `stopTimer()` sets `running` to false and interrupts the sleep,
-     *   so the thread ends quickly.
-     *
-     * Result:
-     * - The timer updates smoothly without freezing the UI.
-     */
     private class TimerThread extends Thread {
 
         private volatile boolean running = true;
@@ -156,7 +137,7 @@ public final class SudokuFieldController {
 
                 try {
                     Thread.sleep(Constants.TIMER_UPDATE_INTERVAL_MS);
-                } catch (InterruptedException e) {
+                } catch (InterruptedException ignored) {
                     break;
                 }
             }
@@ -167,76 +148,72 @@ public final class SudokuFieldController {
         }
     }
 
-    // GAME LOGIC (CELLS)
+    // ---------------- CELLS ----------------
+
     private void attachCells() {
-        for (int r = 0; r < Constants.GRID_SIZE; r++) {
-            for (int c = 0; c < Constants.GRID_SIZE; c++) {
-
-                TextField cell = view.getCellsGrid()[r][c];
-                int row = r, col = c;
-
-                cell.setOnMouseClicked(e -> {
-                    if (model.getLevel().getGameGrid()[row][col] == Constants.EMPTY_CELL) {
-                        String validNumbers = LevelModelUtils.getValidNumbersForCell(
-                                model.getLevel().getSaveGrid(), row, col
-                        );
-                        view.updateHint("Valid numbers: " + validNumbers);
-                    }
-                });
-
-                cell.textProperty().addListener((obs, oldVal, newVal) -> {
-                    if (!cell.isFocused()) return;
-
-                    int[][] grid = model.getLevel().getSaveGrid();
-
-                    if (newVal.isEmpty()) {
-                        grid[row][col] = Constants.EMPTY_CELL;
-                        view.updateHint("Cell cleared");
-                        view.render(model);
-                        return;
-                    }
-
-                    Pair<String, Boolean> result =
-                            LevelModelUtils.isValueAvailable(grid, row, col, newVal);
-
-                    if (result.getValue()) {
-                        try {
-                            int inputValue = Integer.parseInt(newVal);
-                            if (inputValue >= Constants.MIN_VALUE && inputValue <= Constants.MAX_VALUE) {
-                                grid[row][col] = inputValue;
-                                view.updateHint("Valid number");
-
-                                if (model.getLevel().isSudokuSolved()) {
-                                    view.updateHint("Level completed!");
-                                    unlockNextLevel();
-                                    openVictoryDialog();
-                                }
-
-                                view.render(model);
-                            }
-                        } catch (NumberFormatException ignore) {}
-                    } else {
-                        grid[row][col] = Constants.EMPTY_CELL;
-                        cell.setText("");
-                        view.updateHint("Invalid: " + result.getKey());
-                        view.render(model);
-                    }
-                });
+        for (int row = 0; row < Constants.GRID_SIZE; row++) {
+            for (int col = 0; col < Constants.GRID_SIZE; col++) {
+                attachMouseHandler(row, col);
+                attachTextHandler(row, col);
             }
         }
     }
 
-    // GAME END
-    private void openVictoryDialog() {
-        saveTimerToLevel();
-        stopTimer();
-        view.updateHint("Level completed!");
+    private void attachTextHandler(int row, int col) {
+        TextField[][] cellsGrid = view.getCellsGrid();
+        int[][] saveLevelGrid = model.getLevel().getSaveGrid();
+        cellsGrid[row][col].textProperty().addListener((obs, oldVal, newVal) -> {
+            Pair<String, Boolean> result = LevelModelUtils.isValueAvailable(saveLevelGrid, row, col, newVal);
+            if (result.getValue()) {
+                saveLevelGrid[row][col] = Integer.parseInt(newVal);
+                if (model.getLevel().isSudokuSolved()) {
+                    startVictoryDialog();
+                }
+            }
+            if (!result.getValue()) {
+                cellsGrid[row][col].setText("");
+                saveLevelGrid[row][col] = 0;
+            }
+
+            view.updateHint(result.getKey());
+
+        });
     }
 
-    private void unlockNextLevel() {
+    private void attachMouseHandler(int row, int col) {
+        TextField[][] cellsGrid = view.getCellsGrid();
+        cellsGrid[row][col].setOnMouseClicked(e -> {
+            view.updateHint("Valid numbers: " + getValidNumbersForCell(row, col));
+        });
+    }
+
+    // ---------------- CELL LOGIC ----------------
+
+    public String getValidNumbersForCell(int row, int col) {
+        int[][] board = model.getLevel().getGameGrid();
+        StringBuilder result = new StringBuilder();
+        for (int num = Constants.MIN_VALUE; num <= Constants.MAX_VALUE; num++) {
+            if (LevelModelUtils.isNumberValid(board, row, col, num)) {
+                if (!result.isEmpty()) {
+                    result.append(" ");
+                }
+                result.append(num);
+            }
+        }
+        return result.toString();
+    }
+
+    public void startVictoryDialog() {
+        saveTimerToLevel();
+        stopTimer();
         if (model != null) {
             int completedLevel = model.getLevel().getLevelNumber();
-            mainMenuController.onLevelCompleted(completedLevel);
+            mainMenuController.getModel().getPlayerProgress().unlockNextLevel(completedLevel);
+            view.render(model);
         }
+        view.createVictoryDialog();
+        view.getRestartBtn().setOnAction(e -> clickRestart());
+        view.getMainMenuBtn().setOnAction(e -> onMainMenu());
     }
+
 }

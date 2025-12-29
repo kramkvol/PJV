@@ -20,6 +20,8 @@ public final class SudokuFieldView {
     @Getter private final Label hintLabel;
     private final Label timerLabel;
     @Getter private final TextField[][] cellsGrid;
+    @Getter private Button restartBtn;
+    @Getter private Button mainMenuBtn;
 
     public SudokuFieldView(AppContext ctx) {
         this.ctx = ctx;
@@ -105,4 +107,18 @@ public final class SudokuFieldView {
     public void updateHint(String message) {
         hintLabel.setText(message);
     }
+
+    public void createVictoryDialog() {
+        updateHint("Level completed!");
+
+        VBox box = new VBox(Constants.VBOX_SPACING);
+        box.setAlignment(Pos.CENTER);
+
+        restartBtn = GameTools.createDefaultButton("Restart Level");
+        mainMenuBtn = GameTools.createDefaultButton("Main Menu");
+
+        box.getChildren().addAll(restartBtn, mainMenuBtn);
+        ctx.getRoot().setCenter(box);
+    }
+
 }

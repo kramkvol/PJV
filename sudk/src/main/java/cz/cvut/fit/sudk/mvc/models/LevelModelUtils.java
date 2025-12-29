@@ -3,7 +3,6 @@ package cz.cvut.fit.sudk.mvc.models;
 import javafx.util.Pair;
 
 import java.security.SecureRandom;
-import java.util.Arrays;
 
 public final class LevelModelUtils {
     private static final SecureRandom RANDOM = new SecureRandom();
@@ -19,53 +18,38 @@ public final class LevelModelUtils {
         return copy;
     }
 
-    /**
-     * Checks whether a string value can be placed in a given Sudoku cell.
-     *
-     * Validates:
-     * - the string is a number
-     * - the number is in allowed bounds
-     * - it does not violate Sudoku rules (row/column/3×3 square)
-     *
-     * Returns Pair(message, isValid)
-     */
     public static Pair<String, Boolean> isValueAvailable(int[][] board, int row, int col, String strValue) {
+
+        int value;
         try {
-            int intValue = Integer.parseInt(strValue);
-            if (intValue < Constants.MIN_VALUE || intValue > Constants.MAX_VALUE) {
-                return new Pair<>("The number (" + intValue + ") must be between " + Constants.MIN_VALUE + " and " + Constants.MAX_VALUE + ".", false);
-            }
-            if (!checkRow(board, row, intValue)) return new Pair<>("Already in row", false);
-            if (!checkCol(board, col, intValue)) return new Pair<>("Already in column", false);
-            if (!checkSquare(board, row, col, intValue)) return new Pair<>("Already in 3x3", false);
-            return new Pair<>("Ok", true);
+            value = Integer.parseInt(strValue);
         } catch (NumberFormatException e) {
-            return new Pair<>("The value (" + strValue + ") is not a number.", false);
+            return new Pair<>("The value " + strValue + " is not a number.", false);
         }
+
+        if (value < Constants.MIN_VALUE || value > Constants.MAX_VALUE) {
+            return new Pair<>(
+                    "The number " + value + " must be between "
+                            + Constants.MIN_VALUE + " and " + Constants.MAX_VALUE + ".",
+                    false
+            );
+        }
+
+        if (!checkRow(board, row, value)) {
+            return new Pair<>(value + " is already in the row.", false);
+        }
+
+        if (!checkCol(board, col, value)) {
+            return new Pair<>(value + " is already in the column.", false);
+        }
+
+        if (!checkSquare(board, row, col, value)) {
+            return new Pair<>(value + " is already in the 3x3 square.", false);
+        }
+
+        return new Pair<>(value + " is OK.", true);
     }
 
-    /**
-     * Returns a space-separated list of all valid numbers
-     * that can be placed into the specified cell.
-     * Method is used for hints in GUI.
-     */
-    public static String getValidNumbersForCell(int[][] board, int row, int col) {
-        StringBuilder result = new StringBuilder();
-        for (int num = Constants.MIN_VALUE; num <= Constants.MAX_VALUE; num++) {
-            // Only append numbers that don't break Sudoku rules.
-            if (isNumberValid(board, row, col, num)) {
-                if (!result.isEmpty()) {
-                    result.append(" ");
-                }
-                result.append(num);
-            }
-        }
-        return result.toString();
-    }
-
-    /**
-     * Creates an empty 9×9 board and fills it using backtracking.
-     */
     private static int[][] generateSolvedGrid() {
         int[][] solved = new int[Constants.GRID_SIZE][Constants.GRID_SIZE];
         solveSudoku(solved);
@@ -121,7 +105,7 @@ public final class LevelModelUtils {
         return true;
     }
 
-    private static boolean isNumberValid(int[][] board, int row, int col, int value) {
+    public static boolean isNumberValid(int[][] board, int row, int col, int value) {
         return checkRow(board, row, value) && checkCol(board, col, value) && checkSquare(board, row, col, value);
     }
     private static boolean checkRow(int[][] board, int row, int value) {
@@ -130,14 +114,14 @@ public final class LevelModelUtils {
         }
         return true;
     }
-    
+
     private static boolean checkCol(int[][] board, int col, int value) {
         for (int i = 0; i < Constants.GRID_SIZE; i++) {
             if (board[i][col] == value) return false;
         }
         return true;
     }
-    
+
     private static boolean checkSquare(int[][] board, int row, int col, int value) {
         int startRow = row - row % Constants.BOX_SIZE;
         int startCol = col - col % Constants.BOX_SIZE;
@@ -197,9 +181,6 @@ public final class LevelModelUtils {
                 removed++;
             }
         }
-        System.out.println(Arrays.deepToString(board));
-        System.out.println(Arrays.toString(positions));
-        System.out.println(Arrays.deepToString(newBoard));
         return newBoard;
     }
 }
