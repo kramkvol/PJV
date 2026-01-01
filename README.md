@@ -57,9 +57,9 @@ cz.cvut.fit.sudk
 └─ resources
    └─ styles.css
 ```
-![cz.cvut.fit.sudk.controllers](docs/images/structure01.PNG)
-![cz.cvut.fit.sudk.models](docs/images/structure02.PNG)
-![cz.cvut.fit.sudk.views](docs/images/structure03.PNG)
+![cz.cvut.fit.sudk.controllers](docs/images/structure01.png)
+![cz.cvut.fit.sudk.models](docs/images/structure02.png)
+![cz.cvut.fit.sudk.views](docs/images/structure03.png)
 
 ## Class Responsibilities
 
