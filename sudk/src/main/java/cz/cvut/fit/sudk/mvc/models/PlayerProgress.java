@@ -17,7 +17,7 @@ public final class PlayerProgress {
         }
     }
     
-    public boolean isLevelUnlocked(int levelNumber) {
+    boolean isLevelUnlocked(int levelNumber) {
         return levelNumber <= maxUnlockedLevel;
     }
 }

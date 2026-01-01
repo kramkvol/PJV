@@ -22,8 +22,7 @@ public final class GameTools {
     }
 
     public static TextField createSudokuCell() {
-        TextField cell = new TextField("");
-        return cell;
+        return new TextField("");
     }
 
     public static void setCellLocked(TextField cell, boolean locked) {

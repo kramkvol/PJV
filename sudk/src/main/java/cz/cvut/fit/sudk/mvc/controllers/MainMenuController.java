@@ -1,6 +1,8 @@
 package cz.cvut.fit.sudk.mvc.controllers;
 
 
+import cz.cvut.fit.sudk.AppContext;
+import cz.cvut.fit.sudk.mvc.models.GameLevel;
 import cz.cvut.fit.sudk.mvc.models.MainMenuModel;
 import cz.cvut.fit.sudk.mvc.models.SudokuFieldModel;
 import cz.cvut.fit.sudk.mvc.views.GameTools;
@@ -12,7 +14,7 @@ import lombok.Getter;
 
 public final class MainMenuController {
     private final AppContext ctx;
-    @Getter protected final MainMenuModel model;
+    @Getter private final MainMenuModel model;
     private final MainMenuView view;
 
     public MainMenuController(AppContext ctx) {
@@ -97,7 +99,6 @@ public final class MainMenuController {
         Task<GameLevel> loadLevelTask = new Task<>() {
             @Override
             protected GameLevel call() throws Exception {
-                System.out.println("This code is running in a new thread");
                 return LevelFactory.getOrCreateLevel(level);
             }
         };

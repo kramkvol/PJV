@@ -1,5 +1,7 @@
 package cz.cvut.fit.sudk.mvc.controllers;
 
+import cz.cvut.fit.sudk.mvc.models.GameLevel;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +11,7 @@ public final class LevelFactory {
 
     private LevelFactory() {}
 
-    public static GameLevel getOrCreateLevel(int levelNumber) {
+    static GameLevel getOrCreateLevel(int levelNumber) {
         if (levelNumber < 1)
             throw new IllegalArgumentException("Level number must be >= 1");
 

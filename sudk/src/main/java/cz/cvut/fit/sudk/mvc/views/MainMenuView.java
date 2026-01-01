@@ -1,6 +1,6 @@
 package cz.cvut.fit.sudk.mvc.views;
 
-import cz.cvut.fit.sudk.mvc.controllers.AppContext;
+import cz.cvut.fit.sudk.AppContext;
 import cz.cvut.fit.sudk.mvc.models.Constants;
 import cz.cvut.fit.sudk.mvc.models.MainMenuModel;
 import javafx.geometry.Pos;
@@ -16,14 +16,10 @@ public final class MainMenuView {
 
     private final AppContext ctx;
 
-    @Getter
-    private final Button playBtn;
-    @Getter
-    private final Button backBtn;
-    @Getter
-    private final Button nextBtn;
-    @Getter
-    private final Button[] levelButtons = new Button[Constants.LEVELS_PER_PAGE];
+    @Getter private final Button playBtn;
+    @Getter private final Button backBtn;
+    @Getter private final Button nextBtn;
+    @Getter private final Button[] levelButtons = new Button[Constants.LEVELS_PER_PAGE];
 
     public MainMenuView(AppContext ctx) {
         this.ctx = ctx;
@@ -39,13 +35,13 @@ public final class MainMenuView {
     public void mount() {
         ctx.getStage().setTitle("Main Menu");
         
-        VBox levelsBox = makeLevelsGrid(5);
+        VBox levelsBox = makeLevelsGrid();
         levelsBox.setAlignment(Pos.CENTER);
         
         VBox centerBox = new VBox(20, levelsBox);
         centerBox.setAlignment(Pos.CENTER);
         
-        VBox bottomBox = new VBox(20, row(20, backBtn, nextBtn), playBtn);
+        VBox bottomBox = new VBox(20, row(backBtn, nextBtn), playBtn);
         bottomBox.setAlignment(Pos.CENTER);
 
         ctx.getRoot().setTop(null);
@@ -53,19 +49,19 @@ public final class MainMenuView {
         ctx.getRoot().setBottom(bottomBox);
     }
 
-    private HBox row(double spacing, Button... buttons) {
-        HBox box = new HBox(spacing, buttons);
+    private HBox row(Button... buttons) {
+        HBox box = new HBox(20, buttons);
         box.setAlignment(Pos.CENTER);
         return box;
     }
 
-    private VBox makeLevelsGrid(int cols) {
+    private VBox makeLevelsGrid() {
         VBox levelsBox = new VBox(10);
         levelsBox.setAlignment(Pos.CENTER);
-        for (int i = 0; i < levelButtons.length; i += cols) {
+        for (int i = 0; i < levelButtons.length; i += 5) {
             HBox row = new HBox(15);
             row.setAlignment(Pos.CENTER);
-            for (int j = i; j < i + cols && j < levelButtons.length; j++) {
+            for (int j = i; j < i + 5 && j < levelButtons.length; j++) {
                 row.getChildren().add(levelButtons[j]);
             }
             levelsBox.getChildren().add(row);

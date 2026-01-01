@@ -1,6 +1,6 @@
 package cz.cvut.fit.sudk.mvc.views;
 
-import cz.cvut.fit.sudk.mvc.controllers.AppContext;
+import cz.cvut.fit.sudk.AppContext;
 import cz.cvut.fit.sudk.mvc.models.Constants;
 import cz.cvut.fit.sudk.mvc.models.SudokuFieldModel;
 import javafx.geometry.Pos;
@@ -18,10 +18,8 @@ public final class SudokuFieldView {
     @Getter private final Button settingsBtn;
     @Getter private final Label infoLabel;
     @Getter private final Label hintLabel;
-    private final Label timerLabel;
+    @Getter private final Label timerLabel;
     @Getter private final TextField[][] cellsGrid;
-    @Getter private Button restartBtn;
-    @Getter private Button mainMenuBtn;
 
     public SudokuFieldView(AppContext ctx) {
         this.ctx = ctx;
@@ -86,7 +84,7 @@ public final class SudokuFieldView {
     public VBox createBottom() {
         return new VBox();
     }
-    public void render(SudokuFieldModel model) {
+    public void renderLevel(SudokuFieldModel model) {
         infoLabel.setText(model.getLevel().getModeName() + "\nLevel: " + model.getLevel().getLevelNumber());
         int[][] gridSave = model.getLevel().getSaveGrid();
         int[][] gridGame = model.getLevel().getGameGrid();
@@ -101,24 +99,23 @@ public final class SudokuFieldView {
             }
         }
     }
-    public void updateTimer(String formatted) {
-        timerLabel.setText("Time\n" + formatted);
+    public void renderCompletedLevel(SudokuFieldModel model) {
+        infoLabel.setText(model.getLevel().getModeName() + "\nLevel: " + model.getLevel().getLevelNumber());
+        updateTimer(model.getLevel().getElapsedMillis());
+        int[][] gridSave = model.getLevel().getSaveGrid();
+        for (int r = 0; r < Constants.GRID_SIZE; r++) {
+            for (int c = 0; c < Constants.GRID_SIZE; c++) {
+                cellsGrid[r][c].setText(String.valueOf(gridSave[r][c]));
+                GameTools.setCellLocked(cellsGrid[r][c], true);
+            }
+        }
+    }
+    public void updateTimer(long millis) {
+        long sec = millis / 1000;
+        timerLabel.setText("Time\n" + String.format("%02d:%02d", sec / 60, sec % 60));
     }
     public void updateHint(String message) {
         hintLabel.setText(message);
-    }
-
-    public void createVictoryDialog() {
-        updateHint("Level completed!");
-
-        VBox box = new VBox(Constants.VBOX_SPACING);
-        box.setAlignment(Pos.CENTER);
-
-        restartBtn = GameTools.createDefaultButton("Restart Level");
-        mainMenuBtn = GameTools.createDefaultButton("Main Menu");
-
-        box.getChildren().addAll(restartBtn, mainMenuBtn);
-        ctx.getRoot().setCenter(box);
     }
 
 }
