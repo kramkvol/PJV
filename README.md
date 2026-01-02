@@ -146,3 +146,73 @@ cz.cvut.fit.sudk
 - Background level loading implemented using `javafx.concurrent.Task`
 - Game timer implemented using a dedicated background thread
 - UI updates executed safely using `Platform.runLater`
+
+## Screenshots & Screen Description
+
+This section provides an overview of the main application screens and their functionality.
+
+### Main Menu – Level Selection (Pages 1–3)
+
+**Page 1 (Levels 1–25)**  
+The initial main menu screen displaying the first page of available levels.
+The currently selected level is visually highlighted.
+
+![Main Menu](docs/images/01.png)
+
+**Page 2 (Levels 26–50)**  
+Navigation to the next page of levels using the *Next* button.
+
+![Main Menu](docs/images/02.png)
+
+**Page 3 (Levels 51–65 and Locked Levels)**  
+Levels beyond the player’s progress are displayed as locked (`?`).
+The *Next* button is disabled when no further pages are available.
+
+![Main Menu](docs/images/03.png)
+
+### Game Loading Screen
+
+A temporary loading screen shown while the selected Sudoku level
+is generated and initialized in a background thread.
+
+![Game Loading Screen](docs/images/04.png)
+
+### Sudoku Game – Initial State
+
+The main Sudoku game screen after successful loading of a level.
+It displays:
+- current time
+- game mode and level number
+- hint area with valid numbers for the selected cell
+
+![Sudoku Game – Initial State](docs/images/05.png)
+
+### Valid Input Feedback
+
+After entering a valid number, the game displays a confirmation
+message informing the player that the move is correct.
+
+![Valid Input Feedback](docs/images/06.png)
+
+### Rule Violation Feedback
+
+If the entered number violates Sudoku rules (row, column, or 3×3 square),
+an error message is displayed in the hint area.
+
+![Rule Violation Feedback](docs/images/07.png)
+
+### Invalid Input Handling
+
+If the player enters a value outside the allowed range (1–9),
+the game informs the player about the invalid input.
+
+![Rule Violation Feedback](docs/images/08.png)
+
+### Settings / Pause Menu
+
+The settings screen allows the player to:
+- return to the current game
+- restart the level
+- navigate back to the main menu
+
+![Settings / Pause Menu](docs/images/08.png)
