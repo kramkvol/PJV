@@ -217,23 +217,20 @@ The settings screen allows the player to:
 
 ![Settings / Pause Menu](docs/images/09.PNG)
 
-### Game Restart
-
-After selecting *Restart Level*, the game grid is reset to its original state
-and the timer is restarted.
-
-![Game Restart](docs/images/10.PNG)
-
-![Game Restart](docs/images/14.PNG)
 
 ### Game Continued
 
 After selecting *Back to Game* from the settings menu,
 the game continues with the current state preserved.
 
-![Game Continued](docs/images/11.PNG)
+![Game Continued](docs/images/10.PNG)
 
-![Game Continued](docs/images/15.PNG)
+### Game Restart
+
+After selecting *Restart Level*, the game grid is reset to its original state
+and the timer is restarted.
+
+![Game Restart](docs/images/11.PNG)
 
 ### Level Completion
 
@@ -241,5 +238,4 @@ After successfully filling the entire Sudoku grid correctly,
 the game displays a completion message.
 Further actions are available via the settings menu.
 
-![Level Completion](docs/images/15.PNG)
-![Level Completion](docs/images/13.PNG)
+![Level Completion](docs/images/12.PNG)
