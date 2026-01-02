@@ -10,12 +10,15 @@ public class GameLevel {
     @Getter protected final int[][] gameGrid;
     @Getter @Setter protected long elapsedMillis;
     @Getter protected String modeName;
-    
+    @Getter @Setter protected boolean completed;
+
+
     public GameLevel(int levelNumber) {
         this.levelNumber = levelNumber;
         this.gameGrid = SudokuGenerator.generateGameGrid(levelNumber);
         this.saveGrid = LevelModelUtils.getCopy(gameGrid);
         this.elapsedMillis = 0;
+        this.completed = false;
         this.modeName = "Sudoku Classic";
     }
 
@@ -27,5 +30,7 @@ public class GameLevel {
     public void restartLevel() {
         saveGrid = LevelModelUtils.getCopy(gameGrid);
         elapsedMillis = 0;
+        completed = false;
     }
+
 }

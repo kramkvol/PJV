@@ -40,25 +40,30 @@ public final class SudokuFieldController {
     // ---------------- MOUNT ----------------
 
     public void mount() {
-        if(LevelModelUtils.containsZero(model.getLevel().getSaveGrid())){
-            view.mount();
-            view.renderLevel(model);
-            attachCells();
-            view.getSettingsBtn().setOnAction(e -> clickSettings());
-            startTimer();
-        } else {
+        if (model.getLevel().isCompleted()) {
             stopTimer();
             view.mount();
             view.renderCompletedLevel(model);
             view.getSettingsBtn().setOnAction(e -> clickSettings());
-            view.updateHint("Level completed \n Open the Settings to restart/open main menu");
+            return;
         }
+
+        view.mount();
+        view.renderLevel(model);
+        attachCells();
+        view.getSettingsBtn().setOnAction(e -> clickSettings());
+        startTimer();
     }
+
 
     // ---------------- GAME FLOW ----------------
 
     private void clickSettings() {
-        saveTimerToLevel();
+
+        if (!model.getLevel().isCompleted()) {
+            saveTimerToLevel();
+        }
+
         stopTimer();
 
         VBox box = new VBox(15);
@@ -76,16 +81,22 @@ public final class SudokuFieldController {
         ctx.getRoot().setCenter(box);
     }
 
+
     private void clickResume() {
         mount();
         view.updateHint("Game continued.");
     }
 
+
+
     private void clickRestart() {
+        stopTimer();
+        cellsAttached = false;
         model.getLevel().restartLevel();
         mount();
         view.updateHint("Game restarted.");
     }
+
 
     private void clickMainMenu() {
         mainMenuController.mount();
@@ -102,47 +113,52 @@ public final class SudokuFieldController {
         timerThread.start();
     }
 
-    private void stopTimer() {
-        if (timerThread != null) {
-            timerThread.stopTimer();
-            timerThread = null;
-        }
-    }
-
     private void saveTimerToLevel() {
         long now = System.currentTimeMillis();
         model.getLevel().setElapsedMillis(elapsedBefore + (now - startTimestamp));
+    }
+
+    private void stopTimer() {
+        if (timerThread != null) {
+            timerThread.requestStop();
+            try {
+                timerThread.join();
+            } catch (InterruptedException ignored) {}
+            timerThread = null;
+        }
     }
 
     private class TimerThread extends Thread {
 
         private volatile boolean running = true;
 
+        public void requestStop() {
+            running = false;
+            interrupt();
+        }
+
         @Override
         public void run() {
-            System.out.println("[TimerThread] run() entered (thread started)");
             while (running) {
+
+                long now = System.currentTimeMillis();
+                long total = elapsedBefore + (now - startTimestamp);
+
                 Platform.runLater(() -> {
-                    long now = System.currentTimeMillis();
-                    long total = elapsedBefore + (now - startTimestamp);
-                    view.updateTimer(total);
+                    if (running && view != null) {
+                        view.updateTimer(total);
+                    }
                 });
 
                 try {
                     Thread.sleep(1000);
-                } catch (InterruptedException ignored) {
-                    System.out.println("[TimerThread] interrupted during sleep");
+                } catch (InterruptedException e) {
                     break;
                 }
             }
-            System.out.println("[TimerThread] interrupted during sleep");
-        }
-
-        public void stopTimer() {
-            System.out.println("[TimerThread] interrupted during sleep");
-            running = false;
         }
     }
+
 
     // ---------------- CELLS ----------------
 
@@ -203,10 +219,17 @@ public final class SudokuFieldController {
                     if (!LevelModelUtils.containsZero(saveGrid)) {
                         saveTimerToLevel();
                         stopTimer();
+
+                        model.getLevel().setCompleted(true);
+
                         view.renderCompletedLevel(model);
                         view.updateHint("Level completed \n Open the Settings to restart/open main menu");
-                        mainMenuController.getModel().getPlayerProgress().unlockNextLevel(model.getLevel().getLevelNumber());
+
+                        mainMenuController.getModel()
+                                .getPlayerProgress()
+                                .unlockNextLevel(model.getLevel().getLevelNumber());
                     }
+
                 }
             }
             System.out.println("GameGrid: " + Arrays.deepToString(gameGrid));
