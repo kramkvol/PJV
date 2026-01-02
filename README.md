@@ -1,4 +1,37 @@
 # Sudoku - Semester Project
+## Table of Contents
+- [Description](#description)
+- [Technologies Used](#technologies-used)
+- [Architecture](#architecture)
+- [Project Structure](#project-structure)
+- [Class Responsibilities](#class-responsibilities)
+  - [SudokuApplication](#sudokuapplication)
+  - [AppContext](#appcontext)
+  - [GameLevel](#gamelevel)
+  - [LevelFactory](#levelfactory)
+  - [MainMenuController](#mainmenucontroller)
+  - [SudokuFieldController](#sudokufieldcontroller)
+  - [Constants](#constants)
+  - [LevelModelUtils](#levelmodelutils)
+  - [MainMenuModel](#mainmenumodel)
+  - [PlayerProgress](#playerprogress)
+  - [SudokuFieldModel](#sudokufieldmodel)
+  - [GameTools](#gametools)
+  - [MainMenuView](#mainmenuview)
+  - [SudokuFieldView](#sudokufieldview)
+  - [SudokuGenerator](#sudokugenerator)
+- [Multithreading & Concurrency](#multithreading--concurrency)
+- [Screenshots & Screen Description](#screenshots--screen-description)
+  - [Main Menu – Level Selection (Pages 1–3)](#main-menu--level-selection-pages-13)
+  - [Game Loading Screen](#game-loading-screen)
+  - [Sudoku Game – Initial State](#sudoku-game--initial-state)
+  - [Valid Input Feedback](#valid-input-feedback)
+  - [Rule Violation Feedback](#rule-violation-feedback)
+  - [Invalid Input Handling](#invalid-input-handling)
+  - [Settings / Pause Menu](#settings--pause-menu)
+  - [Game Continued](#game-continued)
+  - [Game Restart](#game-restart)
+  - [Level Completion](#level-completion)
 
 ## Description
 This project is a **Sudoku game implemented using JavaFX** and developed as a **semester project**.
@@ -9,7 +42,6 @@ The main goal of the project is to demonstrate:
 - Java Collections
 - Multithreading and concurrency
 - Clear separation of responsibilities
-
 
 ## Technologies Used
 - Java
