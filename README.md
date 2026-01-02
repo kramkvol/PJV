@@ -239,3 +239,4 @@ the game displays a completion message.
 Further actions are available via the settings menu.
 
 ![Level Completion](docs/images/12.PNG)
+![Level Completion](docs/images/13.PNG)
