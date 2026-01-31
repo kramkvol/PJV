@@ -1,4 +1,9 @@
 # Sudoku - Semester Project
+Planned additions:  
+- [ ] Unit tests 
+- [ ] Mockito 
+- [ ] Spring Boot tests
+
 ## Table of Contents
 - [Description](#description)
 - [Technologies Used](#technologies-used)
